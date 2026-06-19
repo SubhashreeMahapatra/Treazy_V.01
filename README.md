@@ -1,4 +1,4 @@
-# 🇮🇳 Treazy AI — Indian Treasury Intelligence Platform
+# Treazy AI — Indian Treasury Intelligence Platform
 
 Full-stack AI treasury management 
 **Python FastAPI + SQLite + ARIMA + Isolation Forest + CrewAI + Groq + React**
