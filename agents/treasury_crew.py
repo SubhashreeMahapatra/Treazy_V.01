@@ -146,7 +146,7 @@ async def run_crew_analysis(db, entity_id: str = "all", horizon: int = 30) -> di
         key = _check_groq_key()
         os.environ["GROQ_API_KEY"] = key   # ensure litellm can read it
         log.info(f"Starting CrewAI run {run_id} with Groq")
-        report  = _run_crew_with_groq(db, entity_id, horizon)
+        report  = await _run_crew_with_groq(db, entity_id, horizon)
         used_ai = True
         log.info(f"CrewAI run {run_id} completed successfully")
     except Exception as e:
@@ -174,7 +174,7 @@ async def run_crew_analysis(db, entity_id: str = "all", horizon: int = 30) -> di
     }
 
 
-def _run_crew_with_groq(db, entity_id: str, horizon: int) -> str:
+async def _run_crew_with_groq(db, entity_id: str, horizon: int) -> str:
     """
     4-agent CrewAI run. LLM passed as string — required by CrewAI v0.36+.
     litellm package handles the actual Groq API call.
@@ -327,7 +327,7 @@ def _run_crew_with_groq(db, entity_id: str, horizon: int) -> str:
         process=Process.sequential,
         verbose=False,
     )
-    result = crew.kickoff()
+    result = await crew.kickoff_async()
     return str(result)
 
 
