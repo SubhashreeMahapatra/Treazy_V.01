@@ -202,11 +202,36 @@ const NAV = [
   { id: "agents",    icon: "🤖", label: "AI Agents"         },
 ];
 
-function Sidebar({ tab, setTab, onClose }) {
+/**
+ * Sidebar — rendered twice in the app:
+ *   1) Desktop, inline in the flex row (sticky, full height, hidden <900px)
+ *   2) Mobile, inside a position:fixed drawer wrapper (slides in, closable)
+ *
+ * IMPORTANT: these two instances must carry DIFFERENT classNames.
+ * Previously both used "sidebar-desktop sidebar-mobile" on the same
+ * element, so the @media(max-width:900px) rule `.sidebar-desktop{display:
+ * none!important}` hid BOTH instances on small screens — including the
+ * one meant to show as the mobile drawer. That was the blank-panel bug.
+ */
+function Sidebar({ tab, setTab, onClose, mobile = false }) {
   return (
-    <aside className="sidebar-desktop sidebar-mobile" style={{ width: 215, background: C.panel, borderRight: `1px solid ${C.line}`, height: "100vh", position: "sticky", top: 0, display: "flex", flexDirection: "column", overflowY: "auto", flexShrink: 0 }}>
+    <aside
+      className={mobile ? "sidebar-mobile" : "sidebar-desktop"}
+      style={{
+        width: 215,
+        background: C.panel,
+        borderRight: `1px solid ${C.line}`,
+        height: "100vh",
+        position: mobile ? "relative" : "sticky",
+        top: 0,
+        display: "flex",
+        flexDirection: "column",
+        overflowY: "auto",
+        flexShrink: 0,
+      }}
+    >
       {/* Brand */}
-      <div style={{ padding: "18px 16px 14px", borderBottom: `1px solid ${C.line}` }}>
+      <div style={{ padding: "18px 16px 14px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
           <div style={{ width: 34, height: 34, borderRadius: 9, background: C.blue, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🇮🇳</div>
           <div>
@@ -1243,12 +1268,12 @@ export default function TreazyAI() {
       {/* Mobile overlay backdrop */}
       <div className={`mob-overlay${menuOpen?" open":""}`} onClick={() => setMenu(false)}/>
       <div style={{ display:"flex", minHeight:"100vh" }}>
-        {/* Desktop sidebar */}
+        {/* Desktop sidebar — hidden under 900px via .sidebar-desktop CSS rule */}
         <Sidebar tab={tab} setTab={switchTab}/>
-        {/* Mobile sidebar — slides in from left */}
+        {/* Mobile sidebar — separate className so it isn't hidden by the desktop rule too */}
         {menuOpen && (
           <div style={{ position:"fixed", top:0, left:0, bottom:0, width:230, zIndex:50, background:C.panel, borderRight:`1px solid ${C.line}` }}>
-            <Sidebar tab={tab} setTab={switchTab} onClose={() => setMenu(false)}/>
+            <Sidebar tab={tab} setTab={switchTab} onClose={() => setMenu(false)} mobile/>
           </div>
         )}
         <div style={{ flex:1, display:"flex", flexDirection:"column", minWidth:0, overflowX:"hidden" }}>
@@ -1264,4 +1289,5 @@ export default function TreazyAI() {
     </>
   );
 }
+
 
