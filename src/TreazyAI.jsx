@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { API_BASE } from "../config.js";
+import { API_BASE } from "./config.js";
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -436,7 +436,7 @@ function ForecastTab() {
   return (
     <>
       <InfoBox>
-        <strong>How ARIMA works:</strong> AR = uses 2 past balance values to predict next. I = we difference the series once to remove trend (make it stationary). MA = corrects for 2 past errors. Trained on 90 days of real DB data. MAPE ~1–3% is production-grade.
+        <strong>How ARIMA works :</strong> AR = uses 2 past balance values to predict next. I = we difference the series once to remove trend (make it stationary). MA = corrects for 2 past errors. Trained on 90 days of real DB data. MAPE ~1–3% is production-grade.
       </InfoBox>
 
       <Card title="Cash balance forecast" sub="ARIMA(2,1,2) trained on real SQLite data. Blue = actual, purple dashed = AI prediction" mb={16}
@@ -543,7 +543,7 @@ function AnomalyTab() {
   return (
     <>
       <InfoBox>
-        <strong>Isolation Forest:</strong> Randomly splits transaction data into partitions. Normal transactions cluster together and need MANY splits to isolate. Anomalies (duplicate payments, fraud) are statistically rare — they get isolated in FEW splits. Score 0→1, threshold 0.65. Uses 3 features: log(amount), direction (IN/OUT), balance change.
+        <strong>Isolation Forest :</strong> Randomly splits transaction data into partitions. Normal transactions cluster together and need MANY splits to isolate. Anomalies (duplicate payments, fraud) are statistically rare — they get isolated in FEW splits. Score 0→1, threshold 0.65. Uses 3 features: log(amount), direction (IN/OUT), balance change.
       </InfoBox>
 
       <Card title="Run Isolation Forest" sub="Trains on real transaction data from SQLite → flags suspicious events" mb={16}
@@ -657,7 +657,7 @@ function ScenarioTab() {
   return (
     <>
       <InfoBox>
-        <strong>Monte Carlo scenario engine:</strong> We take real historical cash flow data from SQLite and apply parameterised shock multipliers. Each button adjusts collection rates, outflow timing, and FX impact. Indian-specific shocks include GST rate changes, RBI repo rate hikes, RTGS settlement delays, and festive demand collapses.
+        <strong>Monte Carlo scenario engine :</strong> We take real historical cash flow data from SQLite and apply parameterised shock multipliers. Each button adjusts collection rates, outflow timing, and FX impact. Indian-specific shocks include GST rate changes, RBI repo rate hikes, RTGS settlement delays, and festive demand collapses.
       </InfoBox>
 
       <Card title="What-if scenario engine" sub="Real data from DB · Select stress level to reshape liquidity projection" mb={16}>
@@ -743,7 +743,7 @@ function OptimizeTab() {
   return (
     <>
       <InfoBox>
-        <strong>LP Optimizer:</strong> Linear programming objective: maximise Σ(balance_i × yield_i). Constraint: each entity balance ≥ minimum floor. Excess cash above the floor is swept to HDFC/SBI Overnight Liquid MF at ~7% p.a. vs 0% sitting idle in current account. In India, a ₹100Cr idle balance at 7% = ₹7Cr/year recovered.
+        <strong>LP Optimizer :</strong> Linear programming objective: maximise Σ(balance_i × yield_i). Constraint: each entity balance ≥ minimum floor. Excess cash above the floor is swept to HDFC/SBI Overnight Liquid MF at ~7% p.a. vs 0% sitting idle in current account. In India, a ₹100Cr idle balance at 7% = ₹7Cr/year recovered.
       </InfoBox>
 
       <Card title="Cash positioning optimizer" sub="LP solver · Sweep idle cash to Overnight Liquid MFs · Real Indian yields" mb={16}>
@@ -856,7 +856,7 @@ function PortfolioTab() {
       {comp && (
         <Card title="RBI regulatory compliance — CRR / SLR / LCR" sub="Mandatory ratios. Breach = RBI penalty. Green = safe, Red = breach">
           <InfoBox>
-             CRR = 4.5% of deposits must be kept with RBI as cash (no interest). SLR = 18% must be in govt securities (G-Secs, T-Bills). LCR ≥ 100% = must hold enough liquid assets to survive 30-day stress. Breach of CRR = 3% penalty p.a. SLR breach = 5% penalty.
+            CRR = 4.5% of deposits must be kept with RBI as cash (no interest). SLR = 18% must be in govt securities (G-Secs, T-Bills). LCR ≥ 100% = must hold enough liquid assets to survive 30-day stress. Breach of CRR = 3% penalty p.a. SLR breach = 5% penalty.
           </InfoBox>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
             {comp.ratios.slice(0, 6).map((r, i) => {
@@ -922,7 +922,7 @@ function EtlTab() {
   return (
     <>
       <InfoBox>
-        <strong>ETL = Extract, Transform, Load:</strong> Extract = pull data from Tally, bank APIs, GSTN, RBI. Transform = clean it, convert currency, remove duplicates, map to our schema. Load = save into SQLite. Then ARIMA and Isolation Forest run on this clean data. This is what separates a toy project from a production system.
+        <strong>ETL = Extract, Transform, Load (say it simply):</strong> Extract = pull data from Tally, bank APIs, GSTN, RBI. Transform = clean it, convert currency, remove duplicates, map to our schema. Load = save into SQLite. Then ARIMA and Isolation Forest run on this clean data. This is what separates a toy project from a production system.
       </InfoBox>
 
       <div className="grid4" style={{ marginBottom:16 }}>
@@ -1038,7 +1038,7 @@ function SqlTab() {
   return (
     <>
       <InfoBox>
-        <strong>SQL Explorer:</strong> This lets you run any SELECT query live on the real SQLite database.Shows relational schemas, SQL joins, GROUP BY, and financial data structures. The /api/sql endpoint only allows SELECT — no data modification.
+        <strong>SQL Explorer :</strong> This lets you run any SELECT query live on the real SQLite database. Shows relational schemas, SQL joins, GROUP BY, and financial data structures. The /api/sql endpoint only allows SELECT — no data modification.
       </InfoBox>
 
       <Card title="SQL query explorer" sub="Run any SELECT on the real SQLite database · 9 tables">
@@ -1178,11 +1178,18 @@ function AgentsTab() {
 
         {result && (
           <div className="fade">
-            <div style={{ display:"flex", gap:8, marginBottom:12, flexWrap:"wrap" }}>
+            <div style={{ display:"flex", gap:8, marginBottom:12, flexWrap:"wrap", alignItems:"center" }}>
               <Badge text={result.status} type={result.status==="completed"?"success":"error"}/>
+              <Badge text={result.used_ai ? "🤖 Groq AI" : "📋 Rule-based"} type={result.used_ai ? "purple" : "warning"}/>
               {result.duration_ms && <Badge text={`${(result.duration_ms/1000).toFixed(1)}s`} type="info"/>}
               {result.run_id && <span style={{ fontFamily:C.mono, fontSize:10, color:C.faint }}>Run: {result.run_id?.slice(0,8)}…</span>}
             </div>
+            {result.ai_error && (
+              <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"10px 14px", marginBottom:12, fontSize:12, color:"#92400E", lineHeight:1.7 }}>
+                <strong>⚠ AI agents fell back to rule-based engine:</strong> {result.ai_error}<br/>
+                <strong>Fix:</strong> Ensure <code style={{background:"#FEF3C7",padding:"1px 5px",borderRadius:3}}>GROQ_API_KEY</code> is set correctly in Render environment variables → then redeploy.
+              </div>
+            )}
             <div style={{ background:C.card, border:`1px solid ${C.line}`, borderRadius:8, padding:"16px 18px", lineHeight:1.8 }}>
               {formatReport(result.report)}
             </div>
@@ -1257,3 +1264,4 @@ export default function TreazyAI() {
     </>
   );
 }
+
