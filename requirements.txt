@@ -15,6 +15,7 @@ statsmodels
 
 # AI agents
 crewai
+litellm
 langchain-groq
 
 # Market data
