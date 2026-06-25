@@ -21,12 +21,16 @@ import os, uuid, logging, json
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
+# Disable litellm caching — fixes Groq cache_breakpoint error
+os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
+os.environ["LITELLM_DROP_PARAMS"] = "True"   # drop unsupported params like cache_breakpoint
+
 load_dotenv()
 log = logging.getLogger(__name__)
 
 # ── Groq model string for CrewAI ───────────────────────────────────────────
 # CrewAI uses litellm under the hood — pass as "provider/model"
-GROQ_MODEL_STRING = "groq/llama-3.3-70b-versatile"
+GROQ_MODEL_STRING = "groq/llama3-70b-8192"
 
 
 def _check_groq_key() -> str:
