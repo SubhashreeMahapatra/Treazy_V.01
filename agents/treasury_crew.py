@@ -1,7 +1,6 @@
 """
 agents/treasury_crew.py — CrewAI Multi-Agent Treasury System
 =============================================================
-
   "4 specialist agents run sequentially — like a real treasury team.
 
    Agent 1 — Data Analyst:     Queries SQLite, finds cash flow patterns
@@ -21,9 +20,10 @@ import os, uuid, logging, json
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-# Disable litellm caching — fixes Groq cache_breakpoint error
-os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
-os.environ["LITELLM_DROP_PARAMS"] = "True"   # drop unsupported params like cache_breakpoint
+# Fix Groq cache_breakpoint error — must set BEFORE any crew/agent is created
+import litellm as _litellm
+_litellm.drop_params = True          # drop unsupported params like cache_breakpoint
+_litellm.set_verbose  = False        # silence litellm debug logs
 
 load_dotenv()
 log = logging.getLogger(__name__)
@@ -324,6 +324,10 @@ async def _run_crew_with_groq(db, entity_id: str, horizon: int) -> str:
         agent=cto,
         context=[t1, t2, t3],
     )
+
+    # Re-apply drop_params right before kickoff — CrewAI may reset it
+    import litellm as _litellm
+    _litellm.drop_params = True
 
     crew   = Crew(
         agents=[analyst, risk_agent, compliance, cto],
