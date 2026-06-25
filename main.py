@@ -1,13 +1,18 @@
 """
 main.py — FastAPI Application
 ==============================
-        : "FastAPI auto-generates interactive API docs at /docs.
-            /docs — it lists every endpoint
+"FastAPI auto-generates interactive API docs at /docs.
+            The docs — it lists every endpoint
             with request/response schemas."
 
 RUN:  uvicorn main:app --reload --port 8000
 DOCS: http://localhost:8000/docs
 """
+
+import os
+# Fix litellm/Groq cache_breakpoint error — must be set before any import
+os.environ["LITELLM_DROP_PARAMS"] = "True"
+os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
 
 from fastapi import FastAPI, Depends, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -75,7 +80,7 @@ def health():
 def dashboard(db: Session = Depends(get_db)):
     """
     Main dashboard data: KPIs, entity positions, market ticker.
-    : 'This is the first API call the React app makes.
+    This is the first API call the React app makes.
                 Returns all the numbers for the top KPI strip.'
     """
     # Total balance
@@ -158,8 +163,8 @@ def cashflow(entity_id: str, days: int = 90, db: Session = Depends(get_db)):
 def forecast(entity_id: str, days_ahead: int = 30, db: Session = Depends(get_db)):
     """
     Run ARIMA(2,1,2) on historical data → return 30-day forecast.
-    : 'This runs an actual ARIMA model on real DB data.
-                MAPE ~2-3% is production-grade accuracy.'
+    This runs an actual ARIMA model on real DB data.
+    MAPE ~2-3% is production-grade accuracy.
     """
     result = run_arima(db, entity_id, days_ahead)
     if "error" in result:
@@ -172,8 +177,8 @@ def forecast(entity_id: str, days_ahead: int = 30, db: Session = Depends(get_db)
 def detect_anomalies(entity_id: str, db: Session = Depends(get_db)):
     """
     Run Isolation Forest → flag suspicious transactions.
-    : 'Real ML — not simulated. Detects duplicate payments,
-                fraud, and unusual outflows using actual transaction data.'
+    This is a real ML model — not simulated. It detects duplicate payments,
+    fraud, and unusual outflows using actual transaction data.
     """
     result = run_anomaly_detection(db, entity_id)
     if "error" in result:
@@ -292,7 +297,7 @@ class SQLQuery(BaseModel):
 def run_sql(body: SQLQuery, db: Session = Depends(get_db)):
     """
     Run any SELECT query on the database.
-    : 'The SQL Explorer lets the panel run live queries.
+     'The SQL Explorer lets the panel run live queries.
                 I show them the schema and run: SELECT * FROM anomalies
                 WHERE severity=\\'critical\\' — real data, live results.'
     """
@@ -318,7 +323,7 @@ async def run_agents(body: AgentRequest, db: Session = Depends(get_db)):
     """
     Launch the 4-agent CrewAI crew — Data Analyst → Risk → Compliance → CTO.
     Returns a full Treasury Intelligence Report.
-    : 'Click Run — 4 AI agents collaborate in sequence.
+     'Click Run — 4 AI agents collaborate in sequence.
                 Takes 20-60 seconds. Output is a CFO-ready report
                 grounded in real DB data. This is the most impressive
                 feature to show in the demo.'
